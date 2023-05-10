@@ -7,11 +7,13 @@ from langchain.document_loaders import PyPDFLoader
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 # Setting page title and header
 st.set_page_config(page_title="ChatPDF", page_icon="💬")
 st.markdown("<h1 style='text-align: center;'>ChatPDF 💬</h1>", unsafe_allow_html=True)
 st.markdown("<h5 style='text-align: center;'>Transforming PDFs into Dynamic Chat Experience 🚀</h5>", unsafe_allow_html=True)
+
 
 
 # Initialise session state variables
@@ -34,14 +36,23 @@ if 'past' not in st.session_state:
 
 @st.cache_resource
 def build_model(filename):
+    print("inside build model")
+    text_splitter = RecursiveCharacterTextSplitter(
+            # Set a really small chunk size, just to show.
+            chunk_size = 1000,
+            chunk_overlap  = 100,
+            length_function = len,
+        )
     loader = PyPDFLoader(filename)
-    pages = loader.load_and_split()
+    pages = loader.load_and_split(text_splitter=text_splitter)
+    print("documenting index")
     faiss_index = FAISS.from_documents(pages, OpenAIEmbeddings(openai_api_key=openai_api_key))
     memory = ConversationBufferMemory(
         memory_key='chat_history', 
         return_messages=True, 
         output_key='answer'
         )
+    print("building conversational chain")
     qa = ConversationalRetrievalChain.from_llm(
           ChatOpenAI(model_name='gpt-3.5-turbo', max_tokens=712, temperature=0.5, openai_api_key=openai_api_key), 
           faiss_index.as_retriever(), 
