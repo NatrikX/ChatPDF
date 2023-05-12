@@ -39,7 +39,7 @@ def build_model(filename):
     print("inside build model")
     text_splitter = RecursiveCharacterTextSplitter(
             # Set a really small chunk size, just to show.
-            chunk_size = 1000,
+            chunk_size = 2000,
             chunk_overlap  = 100,
             length_function = len,
         )
