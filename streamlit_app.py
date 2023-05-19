@@ -54,7 +54,7 @@ def build_model(filename):
         )
     print("building conversational chain")
     qa = ConversationalRetrievalChain.from_llm(
-          ChatOpenAI(model_name='gpt-4', max_tokens=712, temperature=0.5, openai_api_key=openai_api_key), 
+          ChatOpenAI(model_name='gpt-4', max_tokens=712, temperature=0.1, openai_api_key=openai_api_key), 
           faiss_index.as_retriever(), 
           memory=memory,
           return_source_documents=True
