@@ -39,8 +39,8 @@ def build_model(filename):
     print("inside build model")
     text_splitter = RecursiveCharacterTextSplitter(
             # Set a really small chunk size, just to show.
-            chunk_size = 2000,
-            chunk_overlap  = 100,
+            chunk_size = 1000,
+            chunk_overlap  = 0,
             length_function = len,
         )
     loader = PyPDFLoader(filename)
@@ -54,7 +54,7 @@ def build_model(filename):
         )
     print("building conversational chain")
     qa = ConversationalRetrievalChain.from_llm(
-          ChatOpenAI(model_name='gpt-4', max_tokens=712, temperature=0.1, openai_api_key=openai_api_key), 
+          ChatOpenAI(model_name='gpt-3.5-turbo', max_tokens=712, temperature=0.1, openai_api_key=openai_api_key), 
           faiss_index.as_retriever(), 
           memory=memory,
           return_source_documents=True
