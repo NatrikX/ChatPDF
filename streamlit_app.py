@@ -4,7 +4,7 @@ from streamlit_chat import message
 from langchain.vectorstores import FAISS
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.document_loaders import PyPDFLoader
-from langchain.memory import ConversationBufferMemory
+from langchain.memory import ConversationBufferWindowMemory
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -47,7 +47,8 @@ def build_model(filename):
     pages = loader.load_and_split(text_splitter=text_splitter)
     print("documenting index")
     faiss_index = FAISS.from_documents(pages, OpenAIEmbeddings(openai_api_key=openai_api_key))
-    memory = ConversationBufferMemory(
+    memory = ConversationBufferWindowMemory(
+        k=2,
         memory_key='chat_history', 
         return_messages=True, 
         output_key='answer'
